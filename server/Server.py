@@ -27,3 +27,6 @@ class Server:
 
     def log(self):
         pass
+
+    def main(self):
+        pass
