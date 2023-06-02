@@ -1,9 +1,16 @@
 class Clients:
-    def getCommTime(self, idx):
-        return 1
+    def __init__(self):
+        self.serverIP = None
+        self.TrainConfig = None
 
-    def getTrainTime(self, idx):
-        return 1
+    def localTrain(self):
+        pass
 
-    def getTime(self, idx):
-        return self.getCommTime(idx) + self.getTrainTime(idx)
+    def updateToServer(self):
+        pass
+
+    def connectToServer(self):
+        pass
+
+    def hotUpdate(self):
+        pass
