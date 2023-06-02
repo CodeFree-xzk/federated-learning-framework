@@ -1,2 +1,2 @@
-# faderated-learning-framework
-a faderated learning framework supporting async
+# federated-learning-framework
+a federated learning framework supporting async
