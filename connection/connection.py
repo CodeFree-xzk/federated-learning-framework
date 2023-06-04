@@ -13,23 +13,26 @@ class SocketPool:
 
     def receive(self):
         total_length = int.from_bytes(self.conn.recv(8), byteorder="big")
-        print("应接收{}字节消息".format(total_length))
+        print("{}bytes data to be received".format(total_length))
         cur_length = 0
         total_data = b''
         while cur_length < total_length:
             data = self.conn.recv(1024)
             cur_length += len(data)
             total_data += data
-        print("接收完毕")
+        print("receive completed")
         print(total_data)
+        return total_data
 
     @staticmethod
-    def sendModel(sc_idx, model):
-        SocketPool.connections[sc_idx].send(model)
+    def sendData(sc_idx, data):
+        print("sending data to client#{}".format(sc_idx))
+        SocketPool.connections[sc_idx].send(data)
         pass
 
     @staticmethod
     def receiveModel(sc_idx):
+        print("receiving data from client#{}".format(sc_idx))
         SocketPool.connections[sc_idx].receive()
 
     @staticmethod
@@ -40,6 +43,8 @@ class SocketPool:
         sc.bind((HOST, PORT))
         sc.listen(1000)
 
+        data_sizes = []
+
         count = 0
         while count < num:
             conn, addr = sc.accept()
@@ -47,6 +52,8 @@ class SocketPool:
             SocketPool.connections[count] = socketConnection
             print("addr: {} connected".format(addr))
             count += 1
+
+        return data_sizes
 
 
 if __name__ == '__main__':

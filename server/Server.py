@@ -4,7 +4,8 @@ import numpy as np
 import torch
 import wandb
 
-from server.test import test_img
+from connection.connection import SocketPool
+from utils.test import test_img
 
 
 class Server:
@@ -12,11 +13,9 @@ class Server:
         self.dataset_test = dataset_test
         self.dict_users = dict_users
         self.net_glob = net_glob
-        self.clients = None
-        self.local_data = None
-        self.ssh_pool = None
+
+        self.local_data_sizes = None
         self.round = 0
-        self.client_num = 0
         self.args = args
 
         self.comm = 0
@@ -27,23 +26,21 @@ class Server:
         self.max_avg = 0
         self.max_std = 0
 
-    def register(self):
-        pass
+        SocketPool.register(args.clients_num)
 
     def dispatch(self, client_idx, model):
         pass
 
     def receiveUpdate(self):
-        pass
+        return
 
     def test(self):
         acc_test, loss_test = test_img(self.net_glob, self.dataset_test, self.args)
         self.acc.append(acc_test.item())
-        if len(self.acc) >= 10:
-            avg = sum(self.acc[len(self.acc) - 10::]) / 10
-            if avg > self.max_avg:
-                self.max_avg = avg
-                self.max_std = np.std(self.acc[len(self.acc) - 10::])
+        avg = sum(self.acc[min(0, len(self.acc) - 10)::]) / 10
+        if avg > self.max_avg:
+            self.max_avg = avg
+            self.max_std = np.std(self.acc[len(self.acc) - 10::])
         print("acc:{:.2f}, max_avg:{:.2f}, max_std:{:.2f}".format(acc_test, self.max_avg, self.max_std))
         self.time_list.append(self.time)
         self.comm_list.append(self.comm)
