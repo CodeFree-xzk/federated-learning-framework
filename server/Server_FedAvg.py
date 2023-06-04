@@ -4,8 +4,8 @@ from Server import Server
 
 
 class Server_FedAvg(Server):
-    def __init__(self, args, dataset_test, dict_users, net_glob):
-        super().__init__(args, dataset_test, dict_users, net_glob)
+    def __init__(self, args, dataset_test, net_glob):
+        super().__init__(args, dataset_test, net_glob)
         self.m = int(self.args.clients_num * self.args.frac)
         self.cache = [None for _ in range(self.m)]
 

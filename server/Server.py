@@ -9,24 +9,22 @@ from utils.test import test_img
 
 
 class Server:
-    def __init__(self, args, dataset_test, dict_users, net_glob):
+    def __init__(self, args, dataset_test, net_glob):
         self.dataset_test = dataset_test
-        self.dict_users = dict_users
         self.net_glob = net_glob
 
-        self.local_data_sizes = None
         self.round = 0
         self.args = args
 
         self.comm = 0
         self.time = 0
-        self.comm_list = []
-        self.time_list = []
+        self.comm_record = []
+        self.time_record = []
         self.acc = []
         self.max_avg = 0
         self.max_std = 0
 
-        SocketPool.register(args.clients_num)
+        self.local_data_sizes = SocketPool.register(args.clients_num)
 
     def dispatch(self, client_idx, model):
         pass
@@ -42,8 +40,8 @@ class Server:
             self.max_avg = avg
             self.max_std = np.std(self.acc[len(self.acc) - 10::])
         print("acc:{:.2f}, max_avg:{:.2f}, max_std:{:.2f}".format(acc_test, self.max_avg, self.max_std))
-        self.time_list.append(self.time)
-        self.comm_list.append(self.comm)
+        self.time_record.append(self.time)
+        self.comm_record.append(self.comm)
         wandb.log({'acc': acc_test.item(), 'max_avg': self.max_avg, 'time': self.time, "comm": self.comm})
 
         return acc_test.item()
