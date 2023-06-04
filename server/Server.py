@@ -14,6 +14,7 @@ class Server:
         self.net_glob = net_glob
 
         self.round = 0
+        self.idle_client = set(range(args.client_nums))
         self.args = args
 
         self.comm = 0
@@ -24,13 +25,13 @@ class Server:
         self.max_avg = 0
         self.max_std = 0
 
-        self.local_data_sizes = SocketPool.register(args.clients_num)
+        self.local_data_sizes = SocketPool.register(args.client_nums)
 
-    def dispatch(self, client_idx, model):
-        pass
+    def dispatch(self, client_idx):
+        SocketPool.sendData(client_idx, self.net_glob)
 
     def receiveUpdate(self):
-        return
+        SocketPool.receiveData()
 
     def test(self):
         acc_test, loss_test = test_img(self.net_glob, self.dataset_test, self.args)
@@ -70,3 +71,7 @@ class Server:
             w_avg[k] = torch.div(w_avg[k], total_count)
 
         return w_avg
+
+    # def collectionDataSize(self):
+    #     for i in range(self.args.clients_num):
+    #         SocketPool.

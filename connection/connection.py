@@ -1,3 +1,4 @@
+import pickle
 import socket
 
 
@@ -9,19 +10,22 @@ class SocketPool:
         self.addr = addr
 
     def send(self, data):
-        pass
+        binary_data = pickle.dumps(data)
+        len_data = len(binary_data).to_bytes(8, byteorder="big")
+        self.conn.send(len_data)
+        self.conn.sendall(binary_data)
 
     def receive(self):
         total_length = int.from_bytes(self.conn.recv(8), byteorder="big")
         print("{}bytes data to be received".format(total_length))
         cur_length = 0
-        total_data = b''
+        total_data = bytes()
         while cur_length < total_length:
             data = self.conn.recv(1024)
             cur_length += len(data)
             total_data += data
         print("receive completed")
-        print(total_data)
+        total_data = pickle.loads(total_data)
         return total_data
 
     @staticmethod
@@ -31,7 +35,7 @@ class SocketPool:
         pass
 
     @staticmethod
-    def receiveModel(sc_idx):
+    def receiveData(sc_idx):
         print("receiving data from client#{}".format(sc_idx))
         SocketPool.connections[sc_idx].receive()
 
@@ -51,6 +55,10 @@ class SocketPool:
             socketConnection = SocketPool(conn, addr)
             SocketPool.connections[count] = socketConnection
             print("addr: {} connected".format(addr))
+
+            data_size = socketConnection.receive()
+            print("data size of client#{} is {}".format(count, data_size))
+            data_sizes.append(data_size)
             count += 1
 
         return data_sizes
@@ -58,4 +66,4 @@ class SocketPool:
 
 if __name__ == '__main__':
     SocketPool.register(1)
-    SocketPool.receiveModel(0)
+    # SocketPool.receiveData(0)
