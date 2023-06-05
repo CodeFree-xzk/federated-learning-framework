@@ -7,8 +7,6 @@ from utils.set_seed import set_random_seed
 
 
 class Server_FedAvg(Server):
-    def __init__(self, args, dataset_test, net_glob):
-        super().__init__(args, dataset_test, net_glob)
 
     def main(self):
         m = int(self.args.num_users * self.args.frac)
@@ -18,7 +16,7 @@ class Server_FedAvg(Server):
 
             for client in sample_clients:
                 logger.debug("dispatch model to client#{}", client)
-                self.dispatch(client)
+                self.sendData(client)
                 logger.debug("dispatch completed")
 
             weights = []

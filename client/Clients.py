@@ -15,7 +15,6 @@ class Clients:
 
         self.args = args
         self.loss_func = nn.CrossEntropyLoss()
-        self.selected_clients = []
         self.ldr_train = DataLoader(DatasetSplit(dataset, idxs), batch_size=self.args.local_bs, shuffle=True)
         self.verbose = verbose
         self.idxs = idxs

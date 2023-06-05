@@ -31,8 +31,10 @@ class Server:
 
         self.local_data_sizes = SocketPool.register(args.num_users)
 
-    def dispatch(self, client_idx):
-        SocketPool.sendData(client_idx, self.net_glob)
+    def sendData(self, client_idx, data=None):
+        if data is None:
+            data = self.net_glob
+        SocketPool.sendData(client_idx, data)
 
     def receiveUpdate(self):
         return SocketPool.receiveData()
