@@ -16,7 +16,7 @@ class Server:
         self.net_glob = net_glob
 
         self.round = 0
-        self.idle_client = set(range(args.client_nums))
+        self.idle_client = set(list(range(args.num_users)))
         self.args = args
 
         self.comm = 0
@@ -27,7 +27,7 @@ class Server:
         self.max_avg = 0
         self.max_std = 0
 
-        self.local_data_sizes = SocketPool.register(args.client_nums)
+        self.local_data_sizes = SocketPool.register(args.num_users)
 
     def dispatch(self, client_idx):
         SocketPool.sendData(client_idx, self.net_glob)
@@ -36,9 +36,11 @@ class Server:
         return SocketPool.receiveData()
 
     def test(self):
+        self.net_glob.to(self.args.device)
         acc_test, loss_test = test_img(self.net_glob, self.dataset_test, self.args)
         self.acc.append(acc_test.item())
-        avg = sum(self.acc[min(0, len(self.acc) - 10)::]) / 10
+        temp = self.acc[min(0, len(self.acc) - 10)::]
+        avg = np.mean(temp)
         if avg > self.max_avg:
             self.max_avg = avg
             self.max_std = np.std(self.acc[len(self.acc) - 10::])
@@ -46,7 +48,7 @@ class Server:
                         self.round, acc_test, self.max_avg, self.max_std)
         self.time_record.append(self.time)
         self.comm_record.append(self.comm)
-        wandb.log({'acc': acc_test.item(), 'max_avg': self.max_avg, 'time': self.time, "comm": self.comm})
+        # wandb.log({'acc': acc_test.item(), 'max_avg': self.max_avg, 'time': self.time, "comm": self.comm})
 
         return acc_test.item()
 

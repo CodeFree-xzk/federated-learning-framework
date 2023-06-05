@@ -21,15 +21,14 @@ class Clients:
         self.idxs = idxs
 
         self.trainConfig = None
-        self.register()
+        self.register(len(idxs))
 
-    def register(self):
+    def register(self, data_size):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         logger.info('connected to the server...')
         self.socket.connect(self.addr)
         logger.info("connected to the server successfully")
         logger.info("sending data size to server...")
-        data_size = 100
         self.uploadToServer(data_size)
         logger.info("send completed")
 
@@ -46,6 +45,8 @@ class Clients:
 
     def receiveFromServer(self):
         total_length = int.from_bytes(self.socket.recv(8), byteorder="big")
+        if total_length == 0:
+            logger.critical("connection is closed by server!!! Server may crash!!!")
         logger.info("{} bytes data to be received".format(total_length))
         cur_length = 0
         total_data = bytes()

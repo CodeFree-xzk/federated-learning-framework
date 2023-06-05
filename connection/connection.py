@@ -82,6 +82,7 @@ class SocketPool:
 
         data_sizes = []
 
+        logger.debug("waiting clients to connect...")
         count = 0
         while count < num:
             conn, addr = sc.accept()

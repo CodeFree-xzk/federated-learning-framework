@@ -23,7 +23,7 @@ class DatasetSplit(Dataset):
 
 
 def get_dataset(args):
-    file = os.path.join("data", args.dataset + "_" + str(args.num_users))
+    file = os.path.join("../data", args.dataset + "_" + str(args.num_users))
     if args.iid:
         file += "_iid"
     else:
@@ -61,8 +61,8 @@ def get_dataset(args):
                                                 transforms.Normalize(mean=[0.491, 0.482, 0.447],
                                                                      std=[0.247, 0.243, 0.262])])
 
-        dataset_train = datasets.CIFAR10('./data/cifar10', train=True, download=True, transform=trans_cifar10_train)
-        dataset_test = datasets.CIFAR10('./data/cifar10', train=False, download=True, transform=trans_cifar10_val)
+        dataset_train = datasets.CIFAR10('../data/cifar10', train=True, download=True, transform=trans_cifar10_train)
+        dataset_test = datasets.CIFAR10('../data/cifar10', train=False, download=True, transform=trans_cifar10_val)
         if args.generate_data:
             if args.iid:
                 dict_users = cifar_iid(dataset_train, args.num_users)
