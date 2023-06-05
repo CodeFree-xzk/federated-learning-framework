@@ -1,12 +1,13 @@
 import pickle
 import socket
 import time
-
+import selectors
 from loguru import logger
 
 
 class SocketPool:
     connections = {}
+    sel = selectors.DefaultSelector()
 
     def __init__(self, conn, addr):
         self.conn = conn
@@ -24,14 +25,15 @@ class SocketPool:
         self.conn.sendall(binary_data)
         logger.info("sending data ({} bytes) to client completely", len_data)
 
-    def receive(self):
-        bin_len = self.conn.recv(8)
+    @staticmethod
+    def receive(conn):
+        bin_len = conn.recv(8)
         total_length = int.from_bytes(bin_len, byteorder="big")
         logger.info("{}bytes data to be received".format(total_length))
         cur_length = 0
         total_data = bytes()
         while cur_length < total_length:
-            data = self.conn.recv(1024)
+            data = conn.recv(1024)
             cur_length += len(data)
             total_data += data
         logger.info("receive completed")
@@ -45,9 +47,16 @@ class SocketPool:
         pass
 
     @staticmethod
-    def receiveData(sc_idx):
-        logger.info("receiving data from client#{}".format(sc_idx))
-        SocketPool.connections[sc_idx].receive()
+    def receiveData():
+        # logger.info("receiving data from client#{}".format(sc_idx))
+        # SocketPool.connections[sc_idx].receive()
+
+        while True:
+            events = SocketPool.sel.select()
+            for key, mask in events:
+                client_idx = key.data
+                logger.info("receiving data from client#{}", client_idx)
+                SocketPool.receive(key.fileobj)
 
     @staticmethod
     def register(num):
@@ -56,19 +65,17 @@ class SocketPool:
         sc = socket.socket()
         sc.bind((HOST, PORT))
         sc.listen(1000)
+        sc.setblocking(False)
 
         data_sizes = []
 
         count = 0
         start_time = time.time()
         while count < num:
-            # TODO 这里的60不能写死
-            if time.time() - start_time > 60:
-                logger.error("time out, please check client process and internet")
-                break
             conn, addr = sc.accept()
             socketConnection = SocketPool(conn, addr)
             SocketPool.connections[count] = socketConnection
+            SocketPool.sel.register(conn, selectors.EVENT_READ, count)
             logger.info("client#{}, addr: {} connected".format(count, addr))
 
             data_size = socketConnection.receive()
@@ -80,5 +87,5 @@ class SocketPool:
 
 
 if __name__ == '__main__':
-    SocketPool.register(1)
+    SocketPool.register(2)
     # SocketPool.receiveData(0)

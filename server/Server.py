@@ -1,4 +1,5 @@
 import copy
+from abc import abstractmethod
 
 import numpy as np
 import torch
@@ -49,8 +50,8 @@ class Server:
 
         return acc_test.item()
 
-    def main(self):
-        pass
+    @abstractmethod
+    def main(self): ...
 
     def aggregation(self, model_list, weight_list):
         w_avg = None
