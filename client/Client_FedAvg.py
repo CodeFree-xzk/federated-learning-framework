@@ -53,5 +53,5 @@ if __name__ == '__main__':
     dataset_train, dataset_test, dict_users = get_dataset(args)
     set_random_seed(args.seed)
 
-    client = Clients_FedAvg(args, dataset_train, idxs=[3 * 10000 + i for i in range(10000)])
+    client = Clients_FedAvg(args, dataset_train, idxs=[0 * 10000 + i for i in range(10000)])
     client.main()

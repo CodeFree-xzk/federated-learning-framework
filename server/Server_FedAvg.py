@@ -12,9 +12,8 @@ class Server_FedAvg(Server):
 
     def main(self):
         m = int(self.args.num_users * self.args.frac)
-        start_time = time.time()
 
-        while time.time() - start_time < self.args.limit_time:
+        while time.time() - self.start_time < self.args.limit_time:
             sample_clients = np.random.choice(range(args.num_users), m, replace=False)
 
             for client in sample_clients:
@@ -27,7 +26,7 @@ class Server_FedAvg(Server):
             wait = set(sample_clients)
             while wait:
                 model, client_idx = self.receiveUpdate()
-                logger.debug("received model from clients#{}", client_idx)
+                logger.debug("received model from client#{}", client_idx)
                 cache.append(model.state_dict())
                 weights.append(self.local_data_sizes[client_idx])
                 wait.remove(client_idx)

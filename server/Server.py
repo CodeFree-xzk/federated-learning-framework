@@ -1,4 +1,5 @@
 import copy
+import time
 from abc import abstractmethod
 
 import numpy as np
@@ -20,6 +21,7 @@ class Server:
         self.args = args
 
         self.comm = 0
+        self.start_time = time.time()
         self.time = 0
         self.comm_record = []
         self.time_record = []
@@ -44,8 +46,9 @@ class Server:
         if avg > self.max_avg:
             self.max_avg = avg
             self.max_std = np.std(self.acc[len(self.acc) - 10::])
-        logger.critical("Round{}, acc:{:.2f}, max_avg:{:.2f}, max_std:{:.2f}",
-                        self.round, acc_test, self.max_avg, self.max_std)
+        self.time = time.time() - self.start_time
+        logger.critical("Time:{:.2f}s (Round{}), acc:{:.2f}, max_avg:{:.2f}, max_std:{:.2f}",
+                        self.time, self.round, acc_test, self.max_avg, self.max_std)
         self.time_record.append(self.time)
         self.comm_record.append(self.comm)
         # wandb.log({'acc': acc_test.item(), 'max_avg': self.max_avg, 'time': self.time, "comm": self.comm})
