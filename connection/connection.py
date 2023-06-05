@@ -1,6 +1,5 @@
 import pickle
 import socket
-import time
 import selectors
 
 from loguru import logger
@@ -99,10 +98,3 @@ class SocketPool:
         sc.setblocking(False)
         logger.debug("all clients are ready")
         return data_sizes
-
-
-if __name__ == '__main__':
-    SocketPool.register(1)
-    # time.sleep(5)
-    SocketPool.receiveData()
-    # SocketPool.receiveData(0)
