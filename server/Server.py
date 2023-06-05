@@ -3,6 +3,7 @@ import copy
 import numpy as np
 import torch
 import wandb
+from loguru import logger
 
 from connection.connection import SocketPool
 from utils.test import test_img
@@ -40,21 +41,18 @@ class Server:
         if avg > self.max_avg:
             self.max_avg = avg
             self.max_std = np.std(self.acc[len(self.acc) - 10::])
-        print("acc:{:.2f}, max_avg:{:.2f}, max_std:{:.2f}".format(acc_test, self.max_avg, self.max_std))
+        logger.info("Round{}, acc:{:.2f}, max_avg:{:.2f}, max_std:{:.2f}",
+                    self.round, acc_test, self.max_avg, self.max_std)
         self.time_record.append(self.time)
         self.comm_record.append(self.comm)
         wandb.log({'acc': acc_test.item(), 'max_avg': self.max_avg, 'time': self.time, "comm": self.comm})
 
         return acc_test.item()
 
-    def log(self):
-        pass
-
     def main(self):
         pass
 
-    @staticmethod
-    def aggregation(model_list, weight_list):
+    def aggregation(self, model_list, weight_list):
         w_avg = None
         total_count = sum(weight_list)
 
@@ -70,6 +68,7 @@ class Server:
         for k in w_avg.keys():
             w_avg[k] = torch.div(w_avg[k], total_count)
 
+        self.round += 1
         return w_avg
 
     # def collectionDataSize(self):

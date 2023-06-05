@@ -25,8 +25,6 @@ class Server_FedAvg(Server):
                 model, client_idx = self.receiveUpdate()
                 num_of_received_model += 1
 
-            Server.aggregation(self.cache, [])
+            self.aggregation(self.cache, [])
 
             self.test()
-
-            self.log()

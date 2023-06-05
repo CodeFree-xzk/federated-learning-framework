@@ -1,5 +1,6 @@
 import pickle
 import socket
+from loguru import logger
 
 
 class Clients:
@@ -11,12 +12,13 @@ class Clients:
 
     def register(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        logger.info('connected to the server...')
         self.socket.connect(self.addr)
-        print('connected to the server')
-        print("sending data size to server...")
+        logger.info("connected to the server successfully")
+        logger.info("sending data size to server...")
         data_size = 100
         self.uploadToServer(data_size)
-        print("send completed")
+        logger.info("send completed")
 
     def localTrain(self):
         pass
@@ -29,18 +31,21 @@ class Clients:
 
     def receiveFromServer(self):
         total_length = int.from_bytes(self.socket.recv(8), byteorder="big")
-        print("{} bytes data to be received".format(total_length))
+        logger.info("{} bytes data to be received".format(total_length))
         cur_length = 0
         total_data = bytes()
         while cur_length < total_length:
             data = self.socket.recv(1024)
             cur_length += len(data)
             total_data += data
-        print("receive completed")
+        logger.info("receive completed")
         total_data = pickle.loads(total_data)
-        print(total_data)
-        print(type(total_data))
+        # print(total_data)
+        # print(type(total_data))
         return total_data
+
+    def main(self):
+        pass
 
 
 def hotUpdate(self):
