@@ -33,7 +33,7 @@ class Server:
         SocketPool.sendData(client_idx, self.net_glob)
 
     def receiveUpdate(self):
-        SocketPool.receiveData()
+        return SocketPool.receiveData()
 
     def test(self):
         acc_test, loss_test = test_img(self.net_glob, self.dataset_test, self.args)
@@ -42,8 +42,8 @@ class Server:
         if avg > self.max_avg:
             self.max_avg = avg
             self.max_std = np.std(self.acc[len(self.acc) - 10::])
-        logger.info("Round{}, acc:{:.2f}, max_avg:{:.2f}, max_std:{:.2f}",
-                    self.round, acc_test, self.max_avg, self.max_std)
+        logger.critical("Round{}, acc:{:.2f}, max_avg:{:.2f}, max_std:{:.2f}",
+                        self.round, acc_test, self.max_avg, self.max_std)
         self.time_record.append(self.time)
         self.comm_record.append(self.comm)
         wandb.log({'acc': acc_test.item(), 'max_avg': self.max_avg, 'time': self.time, "comm": self.comm})
@@ -51,7 +51,8 @@ class Server:
         return acc_test.item()
 
     @abstractmethod
-    def main(self): ...
+    def main(self):
+        ...
 
     def aggregation(self, model_list, weight_list):
         w_avg = None
@@ -70,6 +71,7 @@ class Server:
             w_avg[k] = torch.div(w_avg[k], total_count)
 
         self.round += 1
+        self.net_glob.load_state_dict(w_avg)
         return w_avg
 
     # def collectionDataSize(self):

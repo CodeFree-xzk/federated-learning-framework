@@ -20,7 +20,7 @@ class FEMNIST(Dataset):
         self.train = train
 
         train_clients, train_groups, train_data_temp, test_data_temp = read_data("./data/femnist/train",
-                                                                                 "./data/femnist/test")
+                                                                                 "./data/femnist/temp")
         if self.train:
             self.dic_users = {}
             train_data_x = []
@@ -67,7 +67,7 @@ class FEMNIST(Dataset):
         if self.train:
             return self.dic_users
         else:
-            exit("The test dataset do not have dic_users!")
+            exit("The temp dataset do not have dic_users!")
 
 
 def batch_data(data, batch_size, seed):
@@ -114,18 +114,18 @@ def read_dir(data_dir):
 
 
 def read_data(train_data_dir, test_data_dir):
-    '''parses data in given train and test data directories
+    '''parses data in given train and temp data directories
 
     assumes:
     - the data in the input directories are .json files with
         keys 'users' and 'user_data'
-    - the set of train set users is the same as the set of test set users
+    - the set of train set users is the same as the set of temp set users
 
     Return:
         clients: list of client ids
         groups: list of group ids; empty list if none found
         train_data: dictionary of train data
-        test_data: dictionary of test data
+        test_data: dictionary of temp data
     '''
     train_clients, train_groups, train_data = read_dir(train_data_dir)
     test_clients, test_groups, test_data = read_dir(test_data_dir)

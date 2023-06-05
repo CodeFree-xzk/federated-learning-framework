@@ -2,7 +2,7 @@ HOST: "127.0.0.1"
 POST: 8080
 head_size: 8
 
-client_nums: 100
+client_nums: 2
 frac: 0.1
 limit_time: 7200
 

@@ -1,7 +1,5 @@
 import time
 
-import numpy as np
-
 from server.Server import *
 
 
@@ -18,13 +16,19 @@ class Server_FedAvg(Server):
             sample_clients = np.random.choice(self.idle_client, self.m, replace=False)
 
             for client in sample_clients:
+                logger.debug("dispatch model to client#{}", client)
                 self.dispatch(client)
+                logger.debug("dispatch completed")
 
-            num_of_received_model = 0
-            while num_of_received_model < self.m:
+            weights = []
+            wait = set(sample_clients)
+            while wait:
                 model, client_idx = self.receiveUpdate()
-                num_of_received_model += 1
+                logger.debug("received model from clients#{}", client_idx)
+                self.cache.append(model)
+                weights.append(self.local_data_sizes[client_idx])
+                wait.remove(client_idx)
 
-            self.aggregation(self.cache, [])
+            self.aggregation(self.cache, weights)
 
             self.test()

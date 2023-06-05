@@ -1,16 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from torchvision import datasets, transforms
-
+from torch.utils.data import Dataset
 from utils import mydata
 from utils.sampling import *
 from utils.dataset_utils import separate_data, read_record
 from utils.FEMNIST import FEMNIST
-from torch.autograd import Variable
-import torch.nn.functional as F
 import os
 import json
+
+
+class DatasetSplit(Dataset):
+    def __init__(self, dataset, idxs):
+        self.dataset = dataset
+        self.idxs = list(idxs)
+
+    def __len__(self):
+        return len(self.idxs)
+
+    def __getitem__(self, item):
+        image, label = self.dataset[self.idxs[item]]
+        return image, label
 
 
 def get_dataset(args):

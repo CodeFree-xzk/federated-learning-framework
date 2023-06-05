@@ -198,7 +198,7 @@ def gen_classes_per_node(dataset, num_users, classes_per_user=2, high_prob=0.6, 
 def gen_data_split(dataset, num_users, class_partitions):
     """
     divide data indexes for each client based on class_partition
-    :param dataset: pytorch dataset object (train/val/test)
+    :param dataset: pytorch dataset object (train/val/temp)
     :param num_users: number of clients
     :param class_partitions: proportion of classes per client
     :return: dictionary mapping client to its indexes
@@ -230,13 +230,13 @@ def gen_data_split(dataset, num_users, class_partitions):
 
 def gen_random_loaders(dataset, num_users, rand_set_all = None, classes_per_user=2):
     """
-    generates train/val/test loaders of each client
+    generates train/val/temp loaders of each client
     :param data_name: name of dataset, choose from [cifar10, cifar100]
     :param data_path: root path for data dir
     :param num_users: number of clients
     :param bz: batch size
     :param classes_per_user: number of classes assigned to each client
-    :return: train/val/test loaders of each client, list of pytorch dataloaders
+    :return: train/val/temp loaders of each client, list of pytorch dataloaders
     """
     if rand_set_all is None:
         rand_set_all = gen_classes_per_node(dataset, num_users, classes_per_user)

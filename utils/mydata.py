@@ -142,7 +142,7 @@ class CIFAR100_coarse(CIFAR10):
         root (string): Root directory of dataset where directory
             ``cifar-10-batches-py`` exists or will be saved to if download is set to True.
         train (bool, optional): If True, creates dataset from training set, otherwise
-            creates from test set.
+            creates from temp set.
         transform (callable, optional): A function/transform that takes in an PIL image
             and returns a transformed version. E.g, ``transforms.RandomCrop``
         target_transform (callable, optional): A function/transform that takes in the
@@ -160,7 +160,7 @@ class CIFAR100_coarse(CIFAR10):
     ]
 
     test_list = [
-        ['test', 'f0ef6b0ae62326f3e7ffdfab6717acfc'],
+        ['temp', 'f0ef6b0ae62326f3e7ffdfab6717acfc'],
     ]
     meta = {
         'filename': 'meta',
@@ -180,7 +180,7 @@ class CIFAR100_coarse(CIFAR10):
         super(CIFAR10, self).__init__(root, transform=transform,
                                       target_transform=target_transform)
 
-        self.train = train  # training set or test set
+        self.train = train  # training set or temp set
 
         if download:
             self.download()
