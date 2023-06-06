@@ -68,7 +68,8 @@ class SocketPool:
                     logger.warning("client#{} disconnected", client_idx)
                     key.fileobj.close()
                     SocketPool.sel.unregister(key.fileobj)
-                return received_data, client_idx
+                else:
+                    return received_data, client_idx
 
 
     @staticmethod
