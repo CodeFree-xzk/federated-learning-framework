@@ -1,9 +1,4 @@
-import time
-from model.Nets import CNNCifar
 from server.Server import *
-from utils.get_dataset import get_dataset
-from utils.options import args_parser
-from utils.set_seed import set_random_seed
 
 
 class Server_FedAvg(Server):
@@ -12,7 +7,7 @@ class Server_FedAvg(Server):
         m = int(self.args.num_users * self.args.frac)
 
         while time.time() - self.start_time < self.args.limit_time:
-            sample_clients = np.random.choice(range(args.num_users), m, replace=False)
+            sample_clients = np.random.choice(range(self.args.num_users), m, replace=False)
 
             for client in sample_clients:
                 logger.debug("dispatch model to client#{}", client)
@@ -32,14 +27,3 @@ class Server_FedAvg(Server):
             self.aggregation(cache, weights)
 
             self.test()
-
-
-if __name__ == '__main__':
-    args = args_parser()
-    args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
-    set_random_seed(args.seed)
-    dataset_train, dataset_test, dict_users = get_dataset(args)
-    net_glob = CNNCifar(args)
-
-    server = Server_FedAvg(args, dataset_test, net_glob)
-    server.main()

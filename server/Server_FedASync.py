@@ -41,4 +41,5 @@ class Server_FedASync(Server):
             logger.debug("dispatch model to client#{}...", next_client)
             data = {"version": self.round, "model": self.net_glob}
             self.sendData(next_client, data)
+            self.idle_client.remove(next_client)
             logger.debug("dispatch completed")

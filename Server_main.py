@@ -2,6 +2,7 @@ import torch
 
 from model.Nets import CNNCifar
 from server.Server_FedASync import Server_FedASync
+from server.Server_FedAvg import Server_FedAvg
 from utils.get_dataset import get_dataset
 from utils.options import args_parser
 from utils.set_seed import set_random_seed
@@ -13,5 +14,9 @@ if __name__ == '__main__':
     dataset_train, dataset_test, dict_users = get_dataset(args)
     net_glob = CNNCifar(args)
 
-    server = Server_FedASync(args, dataset_test, net_glob)
+    server = None
+    if args.algorithm == "FedASync":
+        server = Server_FedASync(args, dataset_test, net_glob)
+    elif args.algorithm == "FedAvg":
+        server = Server_FedAvg(args, dataset_test, net_glob)
     server.main()

@@ -21,7 +21,6 @@ class Server:
         self.args = args
 
         self.comm = 0
-        self.start_time = time.time()
         self.time = 0
         self.comm_record = []
         self.time_record = []
@@ -29,7 +28,9 @@ class Server:
         self.max_avg = 0
         self.max_std = 0
 
+        logger.debug("{} server boot...", self.args.algorithm)
         self.local_data_sizes = SocketPool.register(args.num_users)
+        self.start_time = time.time()
 
     def sendData(self, client_idx, data=None):
         if data is None:

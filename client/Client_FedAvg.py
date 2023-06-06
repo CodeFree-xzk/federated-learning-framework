@@ -1,10 +1,6 @@
 import torch
 from loguru import logger
-
 from client.Clients import Clients
-from utils.get_dataset import get_dataset
-from utils.options import args_parser
-from utils.set_seed import set_random_seed
 
 
 class Clients_FedAvg(Clients):
@@ -40,18 +36,8 @@ class Clients_FedAvg(Clients):
         while True:
             model = self.receiveFromServer()
             logger.debug("received model from server")
-            model.to(args.device)
+            model.to(self.args.device)
             self.localTrain(model)
             logger.debug("training finished")
             self.uploadToServer(model)
             logger.debug("upload model successfully")
-
-
-if __name__ == '__main__':
-    args = args_parser()
-    args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
-    dataset_train, dataset_test, dict_users = get_dataset(args)
-    set_random_seed(args.seed)
-
-    client = Clients_FedAvg(args, dataset_train, idxs=[3 * 10000 + i for i in range(10000)])
-    client.main()

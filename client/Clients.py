@@ -20,15 +20,16 @@ class Clients:
         self.idxs = idxs
 
         self.trainConfig = None
-        self.register(len(idxs))
+        self.register()
 
-    def register(self, data_size):
+    def register(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         logger.info('connected to the server...')
         self.socket.connect(self.addr)
         logger.info("connected to the server successfully")
-        logger.info("sending data size to server...")
-        self.uploadToServer(data_size)
+        logger.info("sending data size and ID to server...")
+        data = {"ID": self.args.ID, "data_size": len(self.idxs)}
+        self.uploadToServer(data)
         logger.info("send completed")
 
     def uploadToServer(self, data):

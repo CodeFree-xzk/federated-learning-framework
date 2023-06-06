@@ -79,20 +79,24 @@ class SocketPool:
         sc.bind((HOST, PORT))
         sc.listen(1000)
 
-        data_sizes = []
+        data_sizes = [0 for _ in range(num)]
 
         logger.debug("waiting clients to connect...")
         count = 0
         while count < num:
             conn, addr = sc.accept()
             socketConnection = (conn, addr)
-            SocketPool.connections[count] = socketConnection
-            logger.info("client#{}, addr: {} connected".format(count, addr))
-            data_size = SocketPool.receive(conn, count)
-            logger.info("data size of client#{} is {}".format(count, data_size))
-            data_sizes.append(data_size)
+            logger.debug("client addr:{} connected", addr)
 
-            SocketPool.sel.register(conn, selectors.EVENT_READ, count)
+            data = SocketPool.receive(conn, addr)
+            data_size = data["data_size"]
+            ID = data["ID"]
+            data_sizes[ID] = data_size
+            logger.info("data size of client#{} is {}".format(ID, data_size))
+
+            SocketPool.connections[ID] = socketConnection
+            SocketPool.sel.register(conn, selectors.EVENT_READ, ID)
+            logger.debug("client#{} registered", ID)
             count += 1
 
         sc.setblocking(False)

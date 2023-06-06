@@ -8,6 +8,7 @@ import argparse
 def args_parser():
     parser = argparse.ArgumentParser()
     # federated arguments
+    parser.add_argument("--ID", type=int, default=0)
     parser.add_argument('--epochs', type=int, default=50000, help="rounds of training")
     parser.add_argument('--num_users', type=int, default=4, help="number of users: K")
     parser.add_argument('--frac', type=float, default=0.5, help="the fraction of clients: C")
@@ -20,7 +21,7 @@ def args_parser():
     parser.add_argument('--momentum', type=float, default=0.5, help="SGD momentum (default: 0.5)")
     parser.add_argument('--weight_decay', type=float, default=1e-4, help="weight_decay (default: 1e-4)")
     parser.add_argument('--split', type=str, default='user', help="train-temp split type, user or sample")
-    parser.add_argument("--algorithm", type=str, default="FedTrace")
+    parser.add_argument("--algorithm", type=str, default="FedASync")
     parser.add_argument("--limit_time", type=int, default=40000)
     parser.add_argument("--data_augmentation", type=int, default=0)
     parser.add_argument("--cifar100_coarse", type=int, default=1)
@@ -85,7 +86,6 @@ def args_parser():
     # FedTrace
     parser.add_argument('--info', type=str, default="")
     parser.add_argument('--C', type=int, default=5)
-    parser.add_argument('--label_type', type=int, default=2)
     parser.add_argument("--W", type=int, default=2)
     parser.add_argument("--CL", type=int, default=1)
     parser.add_argument("--simulate", type=int, default=0)
@@ -104,13 +104,6 @@ def args_parser():
     parser.add_argument("--stageTwo", type=int, default=500)
     parser.add_argument('--threshold', type=float, default=0.3)
     parser.add_argument('--alpha', type=float, default=0.1)
-
-    # self.K = 20  # number of participant clients K
-    # self.CB1 = 70  # clip parameter in both stages
-    # self.CB2 = 5  # clip parameter B at stage two
-    # self.stageTwo = 3500  # the iteration of stage one
-    # self.threshold = 0.3  # threshold to judge whether gradients are consistent
-    # self.alpha = 0.1  # parameter for momentum to alleviate the effect of non-IID data
 
     args = parser.parse_args()
     return args
