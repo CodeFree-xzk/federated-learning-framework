@@ -28,22 +28,23 @@ class Server_CaBaFL(Server):
         self.update_activation(True)
         self.sim_history = []
         self.selected_count = [0 for _ in range(args.num_users)]
+        self.model_record = [None for _ in range(self.args.num_users)]
 
     def main(self):
         init_clients = np.random.choice(range(self.args.num_users), self.cache_size, replace=False)
         init_data = {"version": self.round, "model": self.net_glob}
-        for client in init_clients:
+        for model_idx, client in enumerate(init_clients):
             logger.debug("dispatch model to client#{}", client)
             self.sendData(client, init_data)
             logger.debug("dispatch completed")
             self.idle_client.remove(client)
+            self.model_record[client: int] = (model_idx, 0)
 
         while time.time() - self.start_time < self.args.limit_time:
             data, client_idx = self.receiveUpdate()
             model = data["model"]
             model.to(self.args.device)
-            model_index = data["model_index"]
-            model_version = data["model_version"]
+            model_index, model_version = self.model_record[client_idx]
             logger.debug("received model from client#{}", client_idx)
 
             if self.filter(model, model_index, model_version):
@@ -67,9 +68,11 @@ class Server_CaBaFL(Server):
             self.idle_client.remove(next_client)
 
             logger.debug("dispatch model to client#{}...", next_client)
-            data = None
+            data = {"round": self.round, "model": self.net_glob}
             self.sendData(next_client, data)
             logger.debug("dispatch completed")
+            self.model_record[client_idx] = None
+            self.model_record[next_client] = (model_index, (model_version + 1) % self.args.T)
 
     def filter(self, model, model_index, model_version):
         activation = self.get_acc_act(self.model_trace[model_index])
