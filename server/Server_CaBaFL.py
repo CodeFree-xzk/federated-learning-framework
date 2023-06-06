@@ -68,7 +68,7 @@ class Server_CaBaFL(Server):
             self.idle_client.remove(next_client)
 
             logger.debug("dispatch model to client#{}...", next_client)
-            data = {"round": self.round, "model": self.net_glob}
+            data = {"round": self.round, "model": self.net_glob if model_version == self.args.T - 1 else model}
             self.sendData(next_client, data)
             logger.debug("dispatch completed")
             self.model_record[client_idx] = None
