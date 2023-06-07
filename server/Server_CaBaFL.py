@@ -1,6 +1,7 @@
 import copy
 import random
 import time
+from typing import List
 import numpy as np
 import torch
 from loguru import logger
@@ -47,9 +48,7 @@ class Server_CaBaFL(Server):
             model_index, model_version = self.model_record[client_idx]
             logger.debug("received model from client#{}", client_idx)
 
-            if self.filter(model, model_index, model_version):
-                self.cache[model_index] = copy.deepcopy(model.state_dict())
-                self.cache_trace = copy.deepcopy(self.model_trace[model_index])
+            self.filter(model, model_index, model_version)
 
             if model_version == self.args.T - 1:
                 weight_list = self.getAggrWeight()
@@ -94,7 +93,7 @@ class Server_CaBaFL(Server):
 
         temp = [self.selected_count[i] for i in idle_client]
         select_range = []
-        if np.var(unitization(self.selected_count)) > self.select_var_bound:
+        if np.var(unitization(self.selected_count)) > self.args.select_var_bound:
             min_value = min(temp)
             for i in self.idle_client:
                 if self.selected_count[i] == min_value:
@@ -119,7 +118,7 @@ class Server_CaBaFL(Server):
         self.selected_count[next_client] += 1
         return next_client
 
-    def getAggrWeight(self):
+    def getAggrWeight(self) -> List[int]:
         sim_list = [0. for _ in range(self.cache_size)]
         for i in range(self.cache_size):
             if len(self.cache_trace[i]) != 0:
@@ -137,7 +136,7 @@ class Server_CaBaFL(Server):
             label_sum = 0
             for idx in self.cache_trace[i]:
                 label_sum += self.local_data_sizes[idx]
-            w_ds_list[i] = label_sum ** self.a
+            w_ds_list[i] = label_sum ** self.args.a
 
         return np.array(w_ds_list) * np.array(w_sim_lst)
 

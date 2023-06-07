@@ -1,12 +1,7 @@
 import copy
-
 import torch
 from loguru import logger
-
 from client.Clients import Clients
-from utils.get_dataset import get_dataset
-from utils.options import args_parser
-from utils.set_seed import set_random_seed
 
 
 class Clients_FedASync(Clients):

@@ -1,12 +1,10 @@
 import copy
 import time
 from abc import abstractmethod
-
 import numpy as np
 import torch
 import wandb
 from loguru import logger
-
 from connection.connection import SocketPool
 from utils.test import test_img
 

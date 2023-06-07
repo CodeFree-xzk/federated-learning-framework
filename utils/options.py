@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# Python version: 3.6
-
 import argparse
 
 
@@ -84,19 +80,11 @@ def args_parser():
     parser.add_argument('--M_frac', type=float, default=0.5)
 
     # FedTrace
-    parser.add_argument('--info', type=str, default="")
-    parser.add_argument('--C', type=int, default=5)
-    parser.add_argument("--W", type=int, default=2)
-    parser.add_argument("--CL", type=int, default=1)
-    parser.add_argument("--simulate", type=int, default=0)
     parser.add_argument('--T', type=int, default=10)
-    parser.add_argument('--time_c', type=int, default=0)
-    parser.add_argument('--CF', type=int, default=1)
+    parser.add_argument('--CF', type=int, default=20)
     parser.add_argument('--CB', type=int, default=4)
-    parser.add_argument('--layer', type=int, default=3)
-    parser.add_argument('--SM', type=int, default=0)
-    parser.add_argument('--DS', type=int, default=1)
-    parser.add_argument('--dynT', type=int, default=0)
+    parser.add_argument('--a', type=float, default=1.0)
+    parser.add_argument("--select_var_bound", type=float, default=5e-5)
 
     parser.add_argument("--K", type=int, default=5)
     parser.add_argument("--CB1", type=int, default=70)
